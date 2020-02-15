@@ -33,9 +33,9 @@ def extract_feat(config):
         try:
             data = next(test_set)
             if config['overwrite'] or not os.path.exists(data['dump_path']):
-                desc, kpt = model.run_test_data(data['image'])
+                desc, kpt, score = model.run_test_data(data['image'])
                 dump_data = {}
-                dump_data['dump_data'] = (desc, kpt)
+                dump_data['dump_data'] = (desc, kpt, score)
                 dump_data['image_path'] = data['image_path']
                 dump_data['dump_path'] = data['dump_path']
                 dataset.format_data(dump_data)

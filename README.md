@@ -27,3 +27,9 @@ cd /local/aslfeat && python image_matching.py --config configs/matching_eval.yam
 ```
 
 ### 2. Benchmark on FMBench
+
+Download the data (validation/test) from [here](https://vision.uvic.ca/imw-challenge/index.md), then configure ``configs/imw2020_eval.yaml``, finally call:
+
+```bash
+cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
+```

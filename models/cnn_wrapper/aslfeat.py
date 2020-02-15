@@ -128,6 +128,7 @@ class ASLFeatNet(Network):
         det_kpt_coord = tf.stack(
             [det_kpt_inds[:, :, 1], det_kpt_inds[:, :, 0]], axis=-1, name='kpt')
         self.layers['kpt'] = det_kpt_coord
+        self.layers['score'] = tf.identity(det_kpt_score, name='score')
 
     def our_score(self, inputs, ksize=3, all_softplus=True, need_norm=True, dilation=1, name='conv'):
         if need_norm:
