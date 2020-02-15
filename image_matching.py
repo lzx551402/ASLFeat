@@ -36,7 +36,7 @@ def extract_local_features(gray_list, model_path, config):
     descs = []
     kpts = []
     for gray_img in gray_list:
-        desc, kpt = model.run_test_data(gray_img)
+        desc, kpt, _ = model.run_test_data(gray_img)
         descs.append(desc)
         kpts.append(kpt)
     return descs, kpts
