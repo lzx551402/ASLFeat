@@ -342,7 +342,7 @@ class MatcherWrapper(object):
 
         if ransac:
             _, mask = cv2.findFundamentalMat(
-                good_kpts1, good_kpts2, cv2.RANSAC, err_thld, confidence=0.999)
+                good_kpts1, good_kpts2, cv2.RANSAC, err_thld, 0.999)
             n_inlier = np.count_nonzero(mask)
             print(info, 'n_putative', len(good_matches), 'n_inlier', n_inlier)
         else:
