@@ -118,6 +118,7 @@ class ASLFeatNet(Network):
         if det_config['kpt_refinement']:
             offsets = tf.squeeze(self.kpt_refinement(ori_det_score_map), axis=-2)
             offsets = tf.gather_nd(offsets, det_kpt_inds, batch_dims=1)
+            offsets = tf.clip_by_value(offsets, -0.5, 0.5)
             det_kpt_inds = tf.cast(det_kpt_inds, tf.float32) + offsets
         else:
             det_kpt_inds = tf.cast(det_kpt_inds, tf.float32)
