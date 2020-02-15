@@ -1,0 +1,21 @@
+data_name: 'fmbench'
+data_split: ''
+data_root: '/local/FM-Bench'
+dump_root: '/local/FM-Bench_aslfeat'
+truncate: [0, null]
+dataset_list: ['TUM', 'KITTI', 'CPC', 'Tanks_and_Temples']
+model_path: 'pretrained/aslfeat/model.ckpt-380000'
+overwrite: true
+net:
+  max_dim: 2048
+  config:
+    kpt_n: 20000
+    kpt_refinement: true
+    deform_desc: 1
+    score_thld: 0.5
+    edge_thld: -1
+    multi_level: true
+    nms_size: 3
+    eof_mask: 5
+    need_norm: true
+    use_peakiness: true
