@@ -92,7 +92,7 @@ class Network(object):
         self.bn_epsilon = epsilon
         self.extra_args = kwargs
         # Endpoints.
-        self.endpoints = []
+        self.endpoints = {}
         if inputs is not None:
             # The current list of terminal nodes
             self.terminals = []

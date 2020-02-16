@@ -30,7 +30,7 @@ cd /local/aslfeat && python image_matching.py --config configs/matching_eval.yam
 
 ### 2. Benchmark on IMW2020 
 
-Download the data (validation/test) from [here](https://vision.uvic.ca/imw-challenge/index.md), then configure ``configs/imw2020_eval.yaml``, finally call:
+Download the data (validation/test) [Link](https://vision.uvic.ca/imw-challenge/index.md), then configure ``configs/imw2020_eval.yaml``, finally call:
 
 ```bash
 cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
@@ -38,7 +38,7 @@ cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
 
 ### 3. Benchmark on FM-Bench
 
-Download  the data from [here](https://onedrive.live.com/?authkey=%21AELjNhhHTl4Rj-Y&id=36712431A95E7A25%21502&cid=36712431A95E7A25), then configure ``configs/fmbench_eval.yaml``, finally call:
+Download the data [Link](https://onedrive.live.com/?authkey=%21AELjNhhHTl4Rj-Y&id=36712431A95E7A25%21502&cid=36712431A95E7A25), then configure ``configs/fmbench_eval.yaml``, finally call:
 
 ```bash
 cd /local/aslfeat && python evaluations.py --config configs/fmbench_eval.yaml

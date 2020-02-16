@@ -54,11 +54,12 @@ class ASLFeatNet(Network):
             comb_names = ['conv6']
             comb_weights = tf.constant([1], dtype=tf.float32)
             scale = [1]
+
         ori_h = tf.shape(self.inputs['data'])[1]
         ori_w = tf.shape(self.inputs['data'])[2]
 
-        comb_det_score_map = None
-        comb_ori_det_score_map = None
+        comb_score_map = None
+
         for idx, tmp_name in enumerate(comb_names):
             tmp_feat_map = self.layers[tmp_name]
             prep_dense_feat_map = tmp_feat_map
@@ -73,62 +74,35 @@ class ASLFeatNet(Network):
                                                dilation=scale[idx], name=tmp_name)
 
             score_vol = alpha * beta
-            det_score_map = tf.reduce_max(score_vol, axis=-1, keepdims=True)
-            ori_det_score_map = det_score_map
-            # apply mask
-            edge_thld = det_config['edge_thld']
-            n_channel = prep_dense_feat_map.get_shape()[-1]
-            is_depthwise_max, is_local_max, is_not_edge = self.det_mask_generation(
-                prep_dense_feat_map, n_channel, dilation=scale[idx], ksize=3, edge_thld=edge_thld)
-            det_mask_map = is_depthwise_max
-            if edge_thld > 0:
-                det_mask_map = tf.logical_and(det_mask_map, is_not_edge)
-                det_mask_map = tf.reduce_sum(
-                    tf.cast(det_mask_map, tf.float32), axis=-1, keepdims=True)
-                det_score_map *= det_mask_map
+            score_map = tf.reduce_max(score_vol, axis=-1, keepdims=True)
+            score_map = tf.image.resize(score_map, (ori_h, ori_w))
+            tmp_comb_weights = comb_weights[idx] * score_map
 
-            det_score_map = tf.image.resize(det_score_map, (ori_h, ori_w))
-            ori_det_score_map = tf.image.resize(ori_det_score_map, (ori_h, ori_w))
-            tmp_comb_weights = comb_weights[idx] * det_score_map
-            tmp_ori_comb_weights = comb_weights[idx] * ori_det_score_map
-
-            if comb_det_score_map is None:
-                comb_det_score_map = tmp_comb_weights
-                comb_ori_det_score_map = tmp_ori_comb_weights
+            if comb_score_map is None:
+                comb_score_map = tmp_comb_weights
             else:
-                comb_det_score_map += tmp_comb_weights
-                comb_ori_det_score_map += tmp_ori_comb_weights
+                comb_score_map += tmp_comb_weights
 
-        det_score_map = comb_det_score_map
-        ori_det_score_map = comb_ori_det_score_map
+        score_map = comb_score_map
 
-        mask_det_score_map = det_score_map
-        map_h = tf.shape(det_score_map)[1]
-        map_w = tf.shape(det_score_map)[2]
-        if det_config['nms_size'] > 0:
-            nms_mask = self.spatial_nms(det_score_map, det_config['nms_size'])
-            mask_det_score_map *= nms_mask
-        if det_config['eof_mask'] > 0:
-            eof_mask = self.end_of_frame_masks(map_h, map_w, det_config['eof_mask'])
-            mask_det_score_map *= eof_mask[..., tf.newaxis]
-
-        det_kpt_inds, det_kpt_score = self.extract_kpts(
-            mask_det_score_map, k=kpt_n, score_thld=det_config['score_thld'])
+        kpt_inds, kpt_score = self.extract_kpts(
+            score_map, k=kpt_n,
+            score_thld=det_config['score_thld'], edge_thld=det_config['edge_thld'],
+            nms_size=det_config['nms_size'], eof_size=det_config['eof_mask'])
 
         if det_config['kpt_refinement']:
-            offsets = tf.squeeze(self.kpt_refinement(ori_det_score_map), axis=-2)
-            offsets = tf.gather_nd(offsets, det_kpt_inds, batch_dims=1)
+            offsets = tf.squeeze(self.kpt_refinement(score_map), axis=-2)
+            offsets = tf.gather_nd(offsets, kpt_inds, batch_dims=1)
             offsets = tf.clip_by_value(offsets, -1.0, 1.0)
-            det_kpt_inds = tf.cast(det_kpt_inds, tf.float32) + offsets
+            kpt_inds = tf.cast(kpt_inds, tf.float32) + offsets
         else:
-            det_kpt_inds = tf.cast(det_kpt_inds, tf.float32)
+            kpt_inds = tf.cast(kpt_inds, tf.float32)
 
-        self.layers['desc'] = tf.nn.l2_normalize(interpolate(
-            det_kpt_inds / 4, dense_feat_map), axis=-1, name='desc')
-        det_kpt_coord = tf.stack(
-            [det_kpt_inds[:, :, 1], det_kpt_inds[:, :, 0]], axis=-1, name='kpt')
-        self.layers['kpt'] = det_kpt_coord
-        self.layers['score'] = tf.identity(det_kpt_score, name='score')
+        self.endpoints['descs'] = tf.nn.l2_normalize(interpolate(
+            kpt_inds / 4, dense_feat_map), axis=-1, name='descs')
+        self.endpoints['kpts'] = tf.stack(
+            [kpt_inds[:, :, 1], kpt_inds[:, :, 0]], axis=-1, name='kpts')
+        self.endpoints['scores'] = tf.identity(kpt_score, name='scores')
 
     def our_score(self, inputs, ksize=3, all_softplus=True, need_norm=True, dilation=1, name='conv'):
         if need_norm:
@@ -189,42 +163,36 @@ class ASLFeatNet(Network):
         alpha = exp_logit / (sum_logit + 1e-6)
         return alpha, beta
 
-    def spatial_nms(self, prob, size):
-        """Performs non maximum suppression on the heatmap using max-pooling. This method is
-        faster than box_nms, but does not suppress contiguous that have the same probability
-        value.
+    def extract_kpts(self, score_map, k=256, score_thld=0, edge_thld=0, nms_size=3, eof_size=5):
+        h = tf.shape(score_map)[1]
+        w = tf.shape(score_map)[2]
 
-        Arguments:
-            prob: the probability heatmap, with shape `[H, W]`.
-            size: a scalar, the size of the pooling window.
-        """
+        mask = score_map > score_thld
+        if nms_size > 0:
+            nms_mask = tf.nn.max_pool(
+                score_map, ksize=[1, nms_size, nms_size, 1], strides=[1, 1, 1, 1], padding='SAME')
+            nms_mask = tf.equal(score_map, nms_mask)
+            mask = tf.logical_and(nms_mask, mask)
+        if eof_size > 0:
+            eof_mask = tf.ones((1, h - 2 * eof_size, w - 2 * eof_size, 1), dtype=tf.float32)
+            eof_mask = tf.pad(eof_mask, [[0, 0], [eof_size, eof_size],
+                                         [eof_size, eof_size], [0, 0]])
+            eof_mask = tf.cast(eof_mask, tf.bool)
+            mask = tf.logical_and(eof_mask, mask)
+        if edge_thld > 0:
+            edge_mask = self.edge_mask(score_map, 1, dilation=3, edge_thld=edge_thld)
+            mask = tf.logical_and(edge_mask, mask)
 
-        pooled = tf.nn.max_pool(
-            prob, ksize=[1, size, size, 1], strides=[1, 1, 1, 1], padding='SAME')
-        nms_mask = tf.to_float(tf.equal(prob, pooled))
-        return nms_mask
+        mask = tf.reshape(mask, (h, w))
+        score_map = tf.reshape(score_map, (h, w))
+        indices = tf.where(mask)
+        scores = tf.gather_nd(score_map, indices)
+        sample = tf.argsort(scores, direction='DESCENDING')[0:k]
 
-    def extract_kpts(self, score_map, k=256, score_thld=0):
-        batch_size = tf.shape(score_map)[0]
-        width = tf.shape(score_map)[2]
-        score_map_flt = tf.reshape(score_map, [batch_size, -1])
-        values, xy_indices = tf.nn.top_k(score_map_flt, k=k)
-        kpx = tf.math.mod(xy_indices, width)
-        kpy = xy_indices // width
-        kpt_inds = tf.stack([kpy, kpx], axis=-1)
+        indices = tf.expand_dims(tf.gather(indices, sample), axis=0)
+        scores = tf.expand_dims(tf.gather(scores, sample), axis=0)
 
-        if score_thld > 0:
-            mask = tf.greater(values, score_thld)
-            kpt_inds = tf.boolean_mask(kpt_inds, mask, axis=0)
-            values = tf.boolean_mask(values, mask, axis=0)
-            kpt_inds = tf.reshape(kpt_inds, (batch_size, -1, 2))
-            values = tf.reshape(values, (batch_size, -1))
-        return kpt_inds, values
-
-    def end_of_frame_masks(self, height, width, radius, dtype=tf.float32):
-        eof_masks = tf.ones((1, height - 2 * radius, width - 2 * radius), dtype=dtype)
-        eof_masks = tf.pad(eof_masks, [[0, 0], [radius, radius], [radius, radius]])
-        return eof_masks
+        return indices, scores
 
     def kpt_refinement(self, inputs):
         n_channel = inputs.get_shape()[-1]
@@ -309,16 +277,6 @@ class ASLFeatNet(Network):
         is_not_edge = self.edge_mask(inputs, n_channel, dilation,
                                      edge_thld) if edge_thld > 0 else None
         return is_depthwise_max, is_local_max, is_not_edge
-
-    def upscale_positions(self, pos, scaling_steps=0):
-        for _ in range(scaling_steps):
-            pos = pos * 2  # + 0.5
-        return pos
-
-    def downscale_positions(self, pos, scaling_steps=0):
-        for _ in range(scaling_steps):
-            pos = pos / 2  # + 0.5
-        return pos
 
 
 def interpolate(pos, inputs, batched=True, nd=True):
