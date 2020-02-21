@@ -37,6 +37,7 @@ def extract_local_features(gray_list, model_path, config):
     kpts = []
     for gray_img in gray_list:
         desc, kpt, _ = model.run_test_data(gray_img)
+        print('feature_num', kpt.shape[0])
         descs.append(desc)
         kpts.append(kpt)
     return descs, kpts
@@ -57,9 +58,12 @@ def main(argv=None):  # pylint: disable=unused-argument
         descs[0], descs[1], kpts[0], kpts[1],
         ratio=config['match']['ratio_test'], cross_check=config['match']['cross_check'],
         err_thld=3, ransac=True, info='ASLFeat')
-
+    # draw matches
     disp = matcher.draw_matches(rgb_list[0], kpts[0], rgb_list[1], kpts[1], match, mask)
-    plt.imsave('disp.jpg', disp)
+
+    output_name = 'disp.jpg'
+    print('image save to', output_name)
+    plt.imsave(output_name, disp)
 
 
 if __name__ == '__main__':

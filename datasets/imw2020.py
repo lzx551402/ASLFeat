@@ -78,6 +78,6 @@ class Imw2020(BaseDataset):
             feat = data['dump_data'][0]
             kpt = data['dump_data'][1]
             score = data['dump_data'][2]
-            _ = gen_kpt_f.create_dataset(basename, data=kpt, dtype='f')
-            _ = gen_desc_f.create_dataset(basename, data=feat, dtype='f')
-            _ = gen_score_f.create_dataset(basename, data=score, dtype='f')
+            _ = gen_kpt_f.create_dataset(basename, data=kpt)
+            _ = gen_desc_f.create_dataset(basename, data=feat)
+            _ = gen_score_f.create_dataset(basename, data=score)

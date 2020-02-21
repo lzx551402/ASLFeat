@@ -8,11 +8,12 @@ net:
     deform_desc: 1
     score_thld: 0.5
     edge_thld: -1
+    multi_pass: true
     multi_level: true
     nms_size: 3
     eof_mask: 5
     need_norm: true
     use_peakiness: true
 match:
-  ratio_test: 0.8 
+  ratio_test: 0.8
   cross_check: true
