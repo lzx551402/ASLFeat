@@ -1,7 +1,7 @@
 import os
+from struct import pack
 import tensorflow as tf
 import numpy as np
-from struct import pack
 
 from utils.common import Notify
 from .base_dataset import BaseDataset
@@ -20,30 +20,29 @@ class Fmbench(BaseDataset):
         img_paths = []
         dump_dict = {}
 
-        for d in range(len(config['dataset_list'])):
-            pairs = np.loadtxt(os.path.join(base_path, 'Dataset',
-                                            config['dataset_list'][d], 'pairs_with_gt.txt'))
+        data_split = config['data_split']
+
+        for seq in data_split:
+            pairs = np.loadtxt(os.path.join(base_path, 'Dataset', seq, 'pairs_with_gt.txt'))
             pairs_which = np.loadtxt(os.path.join(
-                base_path, 'Dataset', config['dataset_list'][d], 'pairs_which_dataset.txt'), dtype=str)
+                base_path, 'Dataset', seq, 'pairs_which_dataset.txt'), dtype=str)
             numpairs = len(pairs)
 
             for i in range(numpairs):
                 img_path_l = os.path.join(
-                    base_path, 'Dataset', config['dataset_list'][d], pairs_which[i], 'Images', '%.8d.jpg' % int(pairs[i, 0]))
+                    base_path, 'Dataset', seq, pairs_which[i], 'Images', '%.8d.jpg' % int(pairs[i, 0]))
                 if img_path_l not in dump_dict:
                     dump_dict[img_path_l] = []
                     img_paths.append(img_path_l)
-                dump_path_l = os.path.join(
-                    dump_folder, config['dataset_list'][d], '%d_l.' % (i+1))
+                dump_path_l = os.path.join(dump_folder, seq, '%d_l.' % (i+1))
                 dump_dict[img_path_l].append(dump_path_l)
 
                 img_path_r = os.path.join(
-                    base_path, 'Dataset', config['dataset_list'][d], pairs_which[i], 'Images', '%.8d.jpg' % int(pairs[i, 1]))
+                    base_path, 'Dataset', seq, pairs_which[i], 'Images', '%.8d.jpg' % int(pairs[i, 1]))
                 if img_path_r not in dump_dict:
                     dump_dict[img_path_r] = []
                     img_paths.append(img_path_r)
-                dump_path_r = os.path.join(
-                    dump_folder, config['dataset_list'][d], '%d_r.' % (i+1))
+                dump_path_r = os.path.join(dump_folder, seq, '%d_r.' % (i+1))
                 dump_dict[img_path_r].append(dump_path_r)
 
         dump_paths = []

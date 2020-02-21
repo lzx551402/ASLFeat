@@ -1,7 +1,7 @@
 data_name: 'yfcc'
 data_split: ['train', 'val', 'test']
-data_root: '/home/jhzhang/IMW2020/data/raw_data/yfcc100m'
-dump_root: '/home/jhzhang/IMW2020/data/raw_data/yfcc100m'
+data_root: '/local/yfcc100m'
+dump_root: '/local/yfcc100m'
 truncate: [0, null]
 model_path: 'pretrained/aslfeat/model.ckpt-380000'
 overwrite: true
@@ -13,11 +13,11 @@ net:
     deform_desc: 1
     score_thld: 0.5
     edge_thld: -1
+    multi_pass: true
     multi_level: true
     nms_size: 3
     eof_mask: 5
     need_norm: true
     use_peakiness: true
 post_format:
-  enable: true
   suffix: '.numkp4000.asl.desc.h5'

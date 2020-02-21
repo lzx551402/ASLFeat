@@ -46,7 +46,7 @@ class Yfcc(BaseDataset):
         gen_path = image_path + self.config['post_format']['suffix']
         if not os.path.exists(gen_path):
             gen_f = h5py.File(gen_path, 'w')
-            aug_feat = data['dump_data'][0]
-            kpt_xy = data['dump_data'][1]
-            _ = gen_f.create_dataset('descriptors', data=aug_feat)
-            _ = gen_f.create_dataset('keypoints', data=kpt_xy)
+            feat = data['dump_data'][0]
+            kpt = data['dump_data'][1]
+            _ = gen_f.create_dataset('descriptors', data=feat)
+            _ = gen_f.create_dataset('keypoints', data=kpt)
