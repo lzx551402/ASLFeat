@@ -1,12 +1,17 @@
 # ASLFeat implementation
 
-## Pre-trained model
+TensorFlow implementation of ASLFeat for CVPR'20 paper ["ASLFeat: Learning Local Features of Accurate Shape and Localization"](https://arxiv.org/abs/1904.04084), by Zixin Luo, Lei Zhou, Xuyang Bai, Hongkai Chen, Jiahui Zhang, Yao Yao, Shiwei Li, Tian Fang and Long Quan.
 
-| Name            | Downloads                                                                         | Descriptions                                                                                                                                                                                                                                                               |
-|-----------------|-----------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| ASLFeat | [Link](https://research.altizure.com/data/aslfeat_models/aslfeat.tar)     | Base ASLFeat model |
+This paper presents a joint learning framework of local feature detectors and descriptors. Two aspects are addressed to learn a powerful feature: 1) shape-awareness of feature points, and 2) the localization accuracy of keypoints. If you find this project useful, please cite:
 
-The TensorFlow network definition can be found [here](models/cnn_wrapper).
+```
+@article{luo2020aslfeat,
+  title={ASLFeat: Learning Local Features of Accurate Shape and Localization},
+  author={Luo, Zixin and Zhou, Lei and Bai, Xuyang and Chen, Hongkai and Zhang, Jiahui and Yao, Yao and Li, Shiwei and Fang, Tian and Quan, Long},
+  journal={Computer Vision and Pattern Recognition (CVPR)},
+  year={2020}
+}
+```
 
 ## Get started
 
@@ -38,8 +43,15 @@ cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
 
 ### 3. Benchmark on FM-Bench
 
-Download the data [Link](https://onedrive.live.com/?authkey=%21AELjNhhHTl4Rj-Y&id=36712431A95E7A25%21502&cid=36712431A95E7A25), then configure ``configs/fmbench_eval.yaml``, finally call:
+Download the (revised) evaluation pipeline, and follow the instruction to download the [testing data](https://1drv.ms/f/s!AiV6XqkxJHE2g3ZC4zYYR05eEY_m):
+```bash
+git clone https://github.com/lzx551402/FM-Bench.git
+```
+
+Configure ``configs/fmbench_eval.yaml`` and call:
 
 ```bash
 cd /local/aslfeat && python evaluations.py --config configs/fmbench_eval.yaml
 ```
+
+The extracted features will be stored in ``FM-Bench/Features_aslfeat``. Use Matlab to run ``Pipeline/Pipeline_Demo.m"`` then ``Evaluation/Evaluate.m`` to obtain the results.

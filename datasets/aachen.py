@@ -25,7 +25,7 @@ class Aachen(BaseDataset):
             print(Notify.WARNING, "Truncate from",
                   config['truncate'][0], "to", config['truncate'][1], Notify.ENDC)
             image_paths = image_paths[config['truncate'][0]:config['truncate'][1]]
-        dump_paths = [image_paths[i] + self.config['post_format']['suffix'] + '.h5' for i in range(len(image_paths))]
+        dump_paths = [image_paths[i] + self.config['post_format']['suffix'] for i in range(len(image_paths))]
         print(Notify.INFO, "Found images:", len(image_paths), Notify.ENDC)
 
         self.data_length = len(image_paths)
