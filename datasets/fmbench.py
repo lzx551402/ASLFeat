@@ -34,7 +34,7 @@ class Fmbench(BaseDataset):
                 if img_path_l not in dump_dict:
                     dump_dict[img_path_l] = []
                     img_paths.append(img_path_l)
-                dump_path_l = os.path.join(dump_folder, seq, '%d_l.' % (i+1))
+                dump_path_l = os.path.join(dump_folder, seq, '%.4d_l.' % (i+1))
                 dump_dict[img_path_l].append(dump_path_l)
 
                 img_path_r = os.path.join(
@@ -42,7 +42,7 @@ class Fmbench(BaseDataset):
                 if img_path_r not in dump_dict:
                     dump_dict[img_path_r] = []
                     img_paths.append(img_path_r)
-                dump_path_r = os.path.join(dump_folder, seq, '%d_r.' % (i+1))
+                dump_path_r = os.path.join(dump_folder, seq, '%.4d_r.' % (i+1))
                 dump_dict[img_path_r].append(dump_path_r)
 
         dump_paths = []
@@ -67,16 +67,15 @@ class Fmbench(BaseDataset):
         dump_path = data['dump_path'].decode('utf-8')
         dump_path = dump_path.split(',')
         ds_name = dump_path[0].split('/')[-2]
-        filename = dump_path[0].split('/')[-1].split('_')
-        filename = '%.4d_%s' % (int(filename[0]), filename[1][0])
+        filename = os.path.basename(dump_path[0])
         if not os.path.exists(dump_root):
             os.mkdir(dump_root)
         sub_dump_folder = os.path.join(dump_root, ds_name)
         if not os.path.exists(sub_dump_folder):
             os.mkdir(sub_dump_folder)
 
-        desc_file = os.path.join(sub_dump_folder, filename + '.descriptors')
-        kpt_file = os.path.join(sub_dump_folder, filename + '.keypoints')
+        desc_file = os.path.join(sub_dump_folder, filename + 'descriptors')
+        kpt_file = os.path.join(sub_dump_folder, filename + 'keypoints')
 
         desc = data['dump_data'][0]
         kpt = data['dump_data'][1]

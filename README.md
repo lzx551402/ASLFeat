@@ -33,7 +33,7 @@ Configure ``configs/matching_eval.yaml`` and call:
 cd /local/aslfeat && python image_matching.py --config configs/matching_eval.yaml
 ```
 
-### 2. Benchmark on IMW2020 
+### 2. Benchmark on [IMW2020](https://vision.uvic.ca/image-matching-challenge/) 
 
 Download the data (validation/test) [Link](https://vision.uvic.ca/imw-challenge/index.md), then configure ``configs/imw2020_eval.yaml``, finally call:
 
@@ -41,9 +41,9 @@ Download the data (validation/test) [Link](https://vision.uvic.ca/imw-challenge/
 cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
 ```
 
-### 3. Benchmark on FM-Bench
+### 3. Benchmark on [FM-Bench](http://jwbian.net/fm-bench)
 
-Download the (revised) evaluation pipeline, and follow the instruction to download the [testing data](https://1drv.ms/f/s!AiV6XqkxJHE2g3ZC4zYYR05eEY_m):
+Download the (customized) evaluation pipeline, and follow the instruction to download the [testing data](https://1drv.ms/f/s!AiV6XqkxJHE2g3ZC4zYYR05eEY_m):
 ```bash
 git clone https://github.com/lzx551402/FM-Bench.git
 ```
@@ -55,3 +55,57 @@ cd /local/aslfeat && python evaluations.py --config configs/fmbench_eval.yaml
 ```
 
 The extracted features will be stored in ``FM-Bench/Features_aslfeat``. Use Matlab to run ``Pipeline/Pipeline_Demo.m"`` then ``Evaluation/Evaluate.m`` to obtain the results.
+
+### 4. Benchmark on [visual localization](https://www.visuallocalization.net/)
+
+Download the [Aachen Day-Night dataset](https://www.visuallocalization.net/datasets/) and follow the [instructions](https://github.com/tsattler/visuallocalizationbenchmark) to configure the evaluation.
+
+Configure ``data_root`` in ``configs/aachen_eval.yaml``, and call:
+
+```bash
+cd /local/aslfeat && python evaluations.py --config configs/aachen_eval.yaml
+```
+
+The extracted features will be saved alongside their corresponding images, e.g., the features for image ``/local/Aachen_Day-Night/images/images_upright/db/1000.jpg`` will be in the file ``/local/Aachen_Day-Night/images/image_upright/db/1000.jpg.aslfeat_ms`` (the method name here is ``aslfeat_ms``).
+
+Finally, refer to the [evaluation script](https://github.com/tsattler/visuallocalizationbenchmark/blob/master/local_feature_evaluation/reconstruction_pipeline.py) to generate and submit the results to the challenge website.
+
+### 5. Benchmark on [Oxford Buildings dataset](https://www.robots.ox.ac.uk/~vgg/data/oxbuildings/) for image retrieval
+
+Download the evaluation data and (parsed) groundtruth files:
+
+```bash
+mkdir Oxford5k && \
+cd Oxford5k && \
+mkdir images && \
+wget https://www.robots.ox.ac.uk/~vgg/data/oxbuildings/oxbuild_images.tgz && \
+tar -xvf oxbuild_images.tgz -C images && \
+wget ... && \
+tar -xvf ... 
+```
+
+Configure ``configs/oxford_eval.yaml``, and extract the features by:
+
+```bash
+cd /local/aslfeat && python evaluations.py --config configs/oxford_eval.yaml
+```
+
+We use Bag-of-Words (BoW) method for image retrieval. To do so, clone and compile [libvot](https://github.com/hlzz/libvot.git):
+
+```bash
+cd Oxford5k && \
+git clone https://github.com/hlzz/libvot.git && \
+mkdir build && \
+cd build && \
+cmake -DLIBVOT_BUILD_TESTS=OFF -DLIBVOT_USE_OPENCV=OFF .. && \
+make
+```
+
+and the mAP can be obtained by:
+
+```bash
+cd Oxford5k && \
+python benchmark.py --method_name aslfeat_ms
+```
+
+Please cite [libvot](https://github.com/hlzz/libvot.git) if you find it useful.

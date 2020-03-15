@@ -30,8 +30,6 @@ class ASLFeatNet(Network):
                 raise NotImplementedError
 
             (self.feed('conv5')
-             # .conv_bn(3, 128, 1, name='conv6_0')
-             # .conv_bn(3, 128, 1, name='conv6_1')
              .deform_conv_bn(3, 128, 1, deform_type=deform_type, name='conv6_0')
              .deform_conv_bn(3, 128, 1, deform_type=deform_type, name='conv6_1')
              .deform_conv(3, 128, 1, biased=False, relu=False, deform_type=deform_type, name='conv6'))

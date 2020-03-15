@@ -12,7 +12,7 @@ net:
     kpt_refinement: true
     deform_desc: 1
     score_thld: 0.5
-    edge_thld: -1
+    edge_thld: 10
     multi_pass: true
     multi_level: true
     nms_size: 3
