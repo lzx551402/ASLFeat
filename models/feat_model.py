@@ -29,7 +29,7 @@ class FeatModel(BaseModel):
             data = data[..., np.newaxis]
         data_size = data.shape
 
-        if self.config['config']['multi_pass']:
+        if self.config['config']['multi_scale']:
             scale_f = 1 / (2**0.50)
             min_scale = max(0.3, 128 / max(H, W))
             n_scale = math.floor(max(math.log(min_scale) / math.log(scale_f), 1))

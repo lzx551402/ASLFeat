@@ -13,7 +13,7 @@ net:
     deform_desc: 1
     score_thld: 0.5
     edge_thld: 10
-    multi_pass: true
+    multi_scale: true
     multi_level: true
     nms_size: 3
     eof_mask: 5

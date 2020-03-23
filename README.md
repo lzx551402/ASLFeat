@@ -1,5 +1,7 @@
 # ASLFeat implementation
 
+![Framework](imgs/framework.png)
+
 TensorFlow implementation of ASLFeat for CVPR'20 paper ["ASLFeat: Learning Local Features of Accurate Shape and Localization"](https://arxiv.org/abs/1904.04084), by Zixin Luo, Lei Zhou, Xuyang Bai, Hongkai Chen, Jiahui Zhang, Yao Yao, Shiwei Li, Tian Fang and Long Quan.
 
 This paper presents a joint learning framework of local feature detectors and descriptors. Two aspects are addressed to learn a powerful feature: 1) shape-awareness of feature points, and 2) the localization accuracy of keypoints. If you find this project useful, please cite:
@@ -13,35 +15,43 @@ This paper presents a joint learning framework of local feature detectors and de
 }
 ```
 
+## Requirements
+
+Please use Python 3.7, install NumPy, OpenCV (3.4.2), OpenCV-Contrib (3.4.2) and TensorFlow (1.15.2). Refer to [requirements.txt](requirements.txt) for some other dependencies.
+
+If you are using conda, you may configure ASLFeat as:
+
+```bash
+conda create --name aslfeat python=3.7 && \
+pip install -r requirements.txt && \
+conda activate aslfeat
+```
+
 ## Get started
 
 Clone the repo and download the pretrained model:
 ```bash
 git clone https://github.com/lzx551402/aslfeat.git && \
-cd /local/aslfeat/pretrained && \
+cd ASLFeat/pretrained && \
 wget https://research.altizure.com/data/aslfeat_models/aslfeat.tar && \
 tar -xvf aslfeat.tar
 ```
 
-## Example scripts
-
-### 1. Test image matching
-
-Configure ``configs/matching_eval.yaml`` and call:
+A quick example for image matching can be called by:
 
 ```bash
 cd /local/aslfeat && python image_matching.py --config configs/matching_eval.yaml
 ```
 
-### 2. Benchmark on [IMW2020](https://vision.uvic.ca/image-matching-challenge/) 
+You may configure ``configs/matching_eval.yaml`` to test images of your own.
 
-Download the data (validation/test) [Link](https://vision.uvic.ca/imw-challenge/index.md), then configure ``configs/imw2020_eval.yaml``, finally call:
+## Evaluation scripts
 
-```bash
-cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
-```
+### 1. Benchmark on [HPatches dataset](http://icvl.ee.ic.ac.uk/vbalnt/hpatches)
 
-### 3. Benchmark on [FM-Bench](http://jwbian.net/fm-bench)
+TODO
+
+### 2. Benchmark on [FM-Bench](http://jwbian.net/fm-bench)
 
 Download the (customized) evaluation pipeline, and follow the instruction to download the [testing data](https://1drv.ms/f/s!AiV6XqkxJHE2g3ZC4zYYR05eEY_m):
 ```bash
@@ -56,7 +66,7 @@ cd /local/aslfeat && python evaluations.py --config configs/fmbench_eval.yaml
 
 The extracted features will be stored in ``FM-Bench/Features_aslfeat``. Use Matlab to run ``Pipeline/Pipeline_Demo.m"`` then ``Evaluation/Evaluate.m`` to obtain the results.
 
-### 4. Benchmark on [visual localization](https://www.visuallocalization.net/)
+### 3. Benchmark on [visual localization](https://www.visuallocalization.net/)
 
 Download the [Aachen Day-Night dataset](https://www.visuallocalization.net/datasets/) and follow the [instructions](https://github.com/tsattler/visuallocalizationbenchmark) to configure the evaluation.
 
@@ -70,9 +80,9 @@ The extracted features will be saved alongside their corresponding images, e.g.,
 
 Finally, refer to the [evaluation script](https://github.com/tsattler/visuallocalizationbenchmark/blob/master/local_feature_evaluation/reconstruction_pipeline.py) to generate and submit the results to the challenge website.
 
-### 5. Benchmark on [Oxford Buildings dataset](https://www.robots.ox.ac.uk/~vgg/data/oxbuildings/) for image retrieval
+### 4. Benchmark on [Oxford Buildings dataset](https://www.robots.ox.ac.uk/~vgg/data/oxbuildings/) for image retrieval
 
-Download the evaluation data and (parsed) groundtruth files:
+Take [Oxford Buildings dataset](https://www.robots.ox.ac.uk/~vgg/data/oxbuildings/) as an example. First, download the evaluation data and (parsed) groundtruth files:
 
 ```bash
 mkdir Oxford5k && \
@@ -80,11 +90,13 @@ cd Oxford5k && \
 mkdir images && \
 wget https://www.robots.ox.ac.uk/~vgg/data/oxbuildings/oxbuild_images.tgz && \
 tar -xvf oxbuild_images.tgz -C images && \
-wget ... && \
+wget https://research.altizure.com/data/aslfeat_models/oxford5k_gt_files.tar && \
 tar -xvf ... 
 ```
 
-Configure ``configs/oxford_eval.yaml``, and extract the features by:
+This script also allows for evaluating [Paris dataset](https://www.robots.ox.ac.uk/~vgg/data/parisbuildings/). The (parsed) groundtruth files can be found [here](https://research.altizure.com/data/aslfeat_models/paris6k_gt_files.tar). Be noted to delete the [corrupted images](https://www.robots.ox.ac.uk/~vgg/data/parisbuildings/corrupt.txt) of the dataset, and put the remaining images under the same folder.
+
+Next, configure ``configs/oxford_eval.yaml``, and extract the features by:
 
 ```bash
 cd /local/aslfeat && python evaluations.py --config configs/oxford_eval.yaml
@@ -109,3 +121,15 @@ python benchmark.py --method_name aslfeat_ms
 ```
 
 Please cite [libvot](https://github.com/hlzz/libvot.git) if you find it useful.
+
+### 5. Benchmark on [ETH dataset](https://github.com/ahojnnes/local-feature-evaluation)
+
+TODO
+
+### 6. Benchmark on [IMW2020](https://vision.uvic.ca/image-matching-challenge/) 
+
+Download the data (validation/test) [Link](https://vision.uvic.ca/imw-challenge/index.md), then configure ``configs/imw2020_eval.yaml``, finally call:
+
+```bash
+cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
+```
