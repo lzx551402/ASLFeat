@@ -3,7 +3,6 @@ h5py
 matplotlib
 pyyaml
 Pillow
+opencv-python
 tensorflow==1.15.2
 tensorflow-estimator==1.15.1
-opencv-python==3.4.2.17
-opencv-contrib-python==3.4.2.17

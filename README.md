@@ -17,12 +17,12 @@ This paper presents a joint learning framework of local feature detectors and de
 
 ## Requirements
 
-Please use Python 3.7, install NumPy, OpenCV (3.4.2), OpenCV-Contrib (3.4.2) and TensorFlow (1.15.2). Refer to [requirements.txt](requirements.txt) for some other dependencies.
+Please use Python 3.7, install NumPy, OpenCV (3.4.2) and TensorFlow (1.15.2). Refer to [requirements.txt](requirements.txt) for some other dependencies.
 
 If you are using conda, you may configure ASLFeat as:
 
 ```bash
-conda create --name aslfeat python=3.7 && \
+conda create --name aslfeat python=3.7 -y && \
 pip install -r requirements.txt && \
 conda activate aslfeat
 ```
@@ -42,6 +42,8 @@ A quick example for image matching can be called by:
 ```bash
 cd /local/aslfeat && python image_matching.py --config configs/matching_eval.yaml
 ```
+
+You will be able to see the matching results by displaying [disp.jpg](imgs/disp.jpg).
 
 You may configure ``configs/matching_eval.yaml`` to test images of your own.
 
