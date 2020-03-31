@@ -2,7 +2,7 @@ data_name: 'gl3d'
 data_split: 'comb'
 data_root: '/local/GL3D'
 dump_root: '/local/GL3D_aslfeat'
-truncate: [0, 1]
+truncate: [0, null]
 model_path: 'pretrained/aslfeat/model.ckpt-380000'
 overwrite: true
 net:
