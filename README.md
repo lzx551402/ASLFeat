@@ -78,7 +78,7 @@ Configure ``data_root`` in ``configs/aachen_eval.yaml``, and call:
 cd /local/aslfeat && python evaluations.py --config configs/aachen_eval.yaml
 ```
 
-The extracted features will be saved alongside their corresponding images, e.g., the features for image ``/local/Aachen_Day-Night/images/images_upright/db/1000.jpg`` will be in the file ``/local/Aachen_Day-Night/images/image_upright/db/1000.jpg.aslfeat_ms`` (the method name here is ``aslfeat_ms``).
+The extracted features will be saved alongside their corresponding images, e.g., the features for image ``/local/Aachen_Day-Night/images/images_upright/db/1000.jpg`` will be in the file ``/local/Aachen_Day-Night/images/image_upright/db/1000.jpg.aslfeat`` (the method name here is ``aslfeat``).
 
 Finally, refer to the [evaluation script](https://github.com/tsattler/visuallocalizationbenchmark/blob/master/local_feature_evaluation/reconstruction_pipeline.py) to generate and submit the results to the challenge website.
 

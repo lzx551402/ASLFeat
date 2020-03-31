@@ -1,8 +1,8 @@
-data_name: 'yfcc'
-data_split: ['train', 'val', 'test']
-data_root: '/local/yfcc100m'
-dump_root: '/local/yfcc100m'
-truncate: [0, null]
+data_name: 'gl3d'
+data_split: 'comb'
+data_root: '/local/GL3D'
+dump_root: '/local/GL3D_aslfeat'
+truncate: [0, 1]
 model_path: 'pretrained/aslfeat/model.ckpt-380000'
 overwrite: true
 net:
