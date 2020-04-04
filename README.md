@@ -51,7 +51,23 @@ You may configure ``configs/matching_eval.yaml`` to test images of your own.
 
 ### 1. Benchmark on [HPatches dataset](http://icvl.ee.ic.ac.uk/vbalnt/hpatches)
 
-TODO
+Download the original sequences (i.e., ``hpatches-sequences-release.tar.gz``), configure ``configs/hseq_eval.yaml``, and call:
+
+```bash
+cd /local/aslfeat && python hseq_eval.py --config configs/hseq_eval.yaml
+```
+
+At the end of running, we report the average number of features, repeatability, precision, matching score, recall and mean matching accuracy (a.k.a. MMA). The evaluation results will be displayed as:
+```bash
+...
+----------all_eval_stats----------
+avg_n_feat 3916
+avg_rep 0.7831441
+avg_precision 0.7396421
+avg_matching_score 0.4628032
+avg_recall 0.6226283
+avg_MMA 0.7225959
+```
 
 ### 2. Benchmark on [FM-Bench](http://jwbian.net/fm-bench)
 
