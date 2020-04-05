@@ -116,7 +116,6 @@ def matcher(consumer_queue, sess, evaluator, config):
         if os.path.basename(seq_name)[0] == 'v':
             evaluator.stats['v_eval_stats'] += eval_stats
 
-        exit()
         record = []
 
 def hseq_eval():

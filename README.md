@@ -59,6 +59,14 @@ cd /local/aslfeat && python hseq_eval.py --config configs/hseq_eval.yaml
 
 At the end of running, we report the average number of features, repeatability, precision, matching score, recall and mean matching accuracy (a.k.a. MMA). The evaluation results will be displayed as:
 ```bash
+0 /data/hpatches-sequences-release/v_abstract
+5000 [0.7105522  0.7984268  0.5163258  0.71908796 0.7664455 ]
+1 /data/hpatches-sequences-release/v_adam
+1620 [1.25235    0.88788044 0.72517836 0.5968998  0.8819124 ]
+...
+----------i_eval_stats----------
+...
+----------v_eval_stats----------
 ...
 ----------all_eval_stats----------
 avg_n_feat 3916
@@ -68,6 +76,8 @@ avg_matching_score 0.4628032
 avg_recall 0.6226283
 avg_MMA 0.7225959
 ```
+
+To plot the results (i.e., reproduce Fig.3 in the paper), please include the [cached files](cache/), use the tool provided by [D2-Net](https://github.com/mihaidusmanu/d2-net/blob/master/hpatches_sequences/HPatches-Sequences-Matching-Benchmark.ipynb).
 
 ### 2. Benchmark on [FM-Bench](http://jwbian.net/fm-bench)
 
