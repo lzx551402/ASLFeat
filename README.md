@@ -94,6 +94,8 @@ cd /local/aslfeat && python evaluations.py --config configs/fmbench_eval.yaml
 
 The extracted features will be stored in ``FM-Bench/Features_aslfeat``. Use Matlab to run ``Pipeline/Pipeline_Demo.m"`` then ``Evaluation/Evaluate.m`` to obtain the results.
 
+The cached results of ASLFeat can be reached [here](https://research.altizure.com/data/aslfeat_models/Results.tar).
+
 ### 3. Benchmark on [visual localization](https://www.visuallocalization.net/)
 
 Download the [Aachen Day-Night dataset](https://www.visuallocalization.net/datasets/) and follow the [instructions](https://github.com/tsattler/visuallocalizationbenchmark) to configure the evaluation.
@@ -152,7 +154,13 @@ Please cite [libvot](https://github.com/hlzz/libvot.git) if you find it useful.
 
 ### 5. Benchmark on [ETH dataset](https://github.com/ahojnnes/local-feature-evaluation)
 
-TODO
+Follow the [instruction](https://github.com/ahojnnes/local-feature-evaluation/blob/master/INSTRUCTIONS.md) to download the data, configure ``configs/eth_eval.yaml`` and call:
+
+```bash
+cda /local/aslfeat && python evaluations.py --config configs/eth_eval.yaml
+```
+
+To extract the features.
 
 ### 6. Benchmark on [IMW2020](https://vision.uvic.ca/image-matching-challenge/) 
 
