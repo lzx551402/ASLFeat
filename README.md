@@ -169,3 +169,21 @@ Download the data (validation/test) [Link](https://vision.uvic.ca/imw-challenge/
 ```bash
 cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
 ```
+
+## Misc 
+
+1. Training data is provided in [GL3D](https://github.com/lzx551402/GL3D).
+
+2. You might be also interested in a 3D local feature, [D3Feat](https://github.com/XuyangBai/D3Feat/).
+
+# Acknowledgements
+
+1. The backbone networks and the learning scheme is heavily borrowed from [D2-Net](https://github.com/mihaidusmanu/d2-net).
+
+2. We thank you the authors of [R2D2](https://github.com/naver/r2d2) for sharing their evaluation results on HPatches that helped us plot Fig.1. The updated results of R2D2 are even more excited.
+
+3. We refer to the public implementation of [SuperPoint](https://github.com/rpautrat/SuperPoint) for organizing the code and implementing the evaluation metrics.
+
+4. We implement the modulated DCN referring to [this](https://github.com/DHZS/tf-deformable-conv-layer/blob/master/nets/deformable_conv_layer.py). The current implementation is not efficient, and we expect a native implementation in TensorFlow to be available in the future.
+
+5. We thank for [Sida Peng](https://pengsida.net/) for sharing his experience in reproducing this work, also pointing out the flaws in our implementation of evaluation metrics.
