@@ -86,7 +86,7 @@ def matcher(consumer_queue, sess, evaluator, config):
                                                                gt_homo)
             cov_ref_coord, cov_test_coord = ref_kpts[ref_mask], test_kpts[test_mask]
             cov_ref_feat, cov_test_feat = ref_descs[ref_mask], test_descs[test_mask]
-            num_cov_feat = min(cov_ref_coord.shape[0], cov_test_coord.shape[0])
+            num_cov_feat = (cov_ref_coord.shape[0] + cov_test_coord.shape[0]) / 2
             # get gt matches
             gt_num = evaluator.get_gt_matches(cov_ref_coord, cov_test_coord, gt_homo, scaling)
             # establish putative matches

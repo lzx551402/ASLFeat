@@ -85,8 +85,11 @@ class Evaluator(object):
         pt0 = np.expand_dims(proj_ref_coord, axis=1)
         pt1 = np.expand_dims(test_coord, axis=0)
         norm = np.linalg.norm(pt0 - pt1, ord=None, axis=2)
-        min_dist = np.min(norm, axis=1)
-        gt_num = np.sum(min_dist <= self.err_thld)
+        min_dist0 = np.min(norm, axis=1)
+        min_dist1 = np.min(norm, axis=0)
+        gt_num0 = np.sum(min_dist0 <= self.err_thld)
+        gt_num1 = np.sum(min_dist1 <= self.err_thld)
+        gt_num = (gt_num0 + gt_num1) / 2
         return gt_num
 
     def print_stats(self, key):
