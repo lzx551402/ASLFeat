@@ -63,7 +63,7 @@ class ASLFeatNet(Network):
             prep_dense_feat_map = tmp_feat_map
 
             if det_config['use_peakiness']:
-                alpha, beta = self.our_score(prep_dense_feat_map, ksize=3,
+                alpha, beta = self.peakiness_score(prep_dense_feat_map, ksize=3,
                                              need_norm=det_config['need_norm'],
                                              dilation=scale[idx], name=tmp_name)
             else:
@@ -102,7 +102,7 @@ class ASLFeatNet(Network):
             [kpt_inds[:, :, 1], kpt_inds[:, :, 0]], axis=-1, name='kpts')
         self.endpoints['scores'] = tf.identity(kpt_score, name='scores')
 
-    def our_score(self, inputs, ksize=3, all_softplus=True, need_norm=True, dilation=1, name='conv'):
+    def peakiness_score(self, inputs, ksize=3, need_norm=True, dilation=1, name='conv'):
         if need_norm:
             from tensorflow.python.training.moving_averages import assign_moving_average
             with tf.compat.v1.variable_scope('tower', reuse=self.reuse):
@@ -124,12 +124,7 @@ class ASLFeatNet(Network):
         avg_inputs = tf.nn.pool(pad_inputs, [ksize, ksize],
                                 'AVG', 'VALID', dilation_rate=[dilation, dilation])
         alpha = tf.math.softplus(inputs - avg_inputs)
-
-        if all_softplus:
-            beta = tf.math.softplus(inputs - tf.reduce_mean(inputs, axis=-1, keepdims=True))
-        else:
-            channel_wise_max = tf.reduce_max(inputs, axis=-1, keepdims=True)
-            beta = inputs / (channel_wise_max + 1e-6)
+        beta = tf.math.softplus(inputs - tf.reduce_mean(inputs, axis=-1, keepdims=True))
         return alpha, beta
 
     def d2net_score(self, inputs, ksize=3, need_norm=True, dilation=1, name='conv'):

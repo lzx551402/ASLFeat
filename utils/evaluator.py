@@ -9,9 +9,9 @@ class Evaluator(object):
         self.err_thld = config['err_thld']
         self.matches = self.bf_matcher_graph()
         self.stats = {
-            'i_eval_stats': np.array((0, 0, 0, 0, 0, 0, 0), np.float32),
-            'v_eval_stats': np.array((0, 0, 0, 0, 0, 0, 0), np.float32),
-            'all_eval_stats': np.array((0, 0, 0, 0, 0, 0, 0), np.float32),
+            'i_eval_stats': np.array((0, 0, 0, 0, 0, 0, 0, 0), np.float32),
+            'v_eval_stats': np.array((0, 0, 0, 0, 0, 0, 0, 0), np.float32),
+            'all_eval_stats': np.array((0, 0, 0, 0, 0, 0, 0, 0), np.float32),
         }
 
     def homo_trans(self, coord, H):
@@ -44,12 +44,15 @@ class Evaluator(object):
         matches = sess.run(self.matches, input_dict)
         return matches.T
 
-    def feature_matcher(self, sess, ref_feat, test_feat, test_coord=None):
+    def feature_matcher(self, sess, ref_feat, test_feat):
         matches = self.mnn_matcher(sess, ref_feat, test_feat)
         matches = [cv2.DMatch(matches[i][0], matches[i][1], 0) for i in range(matches.shape[0])]
         return matches
 
-    def get_covisible_mask(self, ref_coord, test_coord, ref_img_shape, test_img_shape, gt_homo):
+    def get_covisible_mask(self, ref_coord, test_coord, ref_img_shape, test_img_shape, gt_homo, scaling=1.):
+        ref_coord = ref_coord / scaling
+        test_coord = test_coord / scaling
+
         proj_ref_coord = self.homo_trans(ref_coord, gt_homo)
         proj_test_coord = self.homo_trans(test_coord, np.linalg.inv(gt_homo))
 
@@ -92,6 +95,24 @@ class Evaluator(object):
         gt_num = (gt_num0 + gt_num1) / 2
         return gt_num
 
+    def compute_homography_accuracy(self, ref_coord, test_coord, ref_img_shape, putative_matches, gt_homo, scaling=1.):
+        ref_coord = np.float32([ref_coord[m.queryIdx] for m in putative_matches]) / scaling
+        test_coord = np.float32([test_coord[m.trainIdx] for m in putative_matches]) / scaling
+
+        pred_homo, _ = cv2.findHomography(ref_coord, test_coord, cv2.RANSAC)
+        if pred_homo is None:
+            correctness = 0
+        else:
+            corners = np.array([[0, 0],
+                                [ref_img_shape[1] / scaling - 1, 0],
+                                [0, ref_img_shape[0] / scaling - 1],
+                                [ref_img_shape[1] / scaling - 1, ref_img_shape[0] / scaling - 1]])
+            real_warped_corners = self.homo_trans(corners, gt_homo)
+            warped_corners = self.homo_trans(corners, pred_homo)
+            mean_dist = np.mean(np.linalg.norm(real_warped_corners - warped_corners, axis=1))
+            correctness = float(mean_dist <= self.err_thld)
+        return correctness
+
     def print_stats(self, key):
         avg_stats = self.stats[key] / max(self.stats[key][0], 1)
         avg_stats = avg_stats[1:]
@@ -102,3 +123,4 @@ class Evaluator(object):
         print('avg_matching_score', avg_stats[3])
         print('avg_recall', avg_stats[4])
         print('avg_MMA', avg_stats[5])
+        print('avg_homography_accuracy', avg_stats[6])

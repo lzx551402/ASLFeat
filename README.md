@@ -60,28 +60,31 @@ cd /local/aslfeat && python hseq_eval.py --config configs/hseq_eval.yaml
 At the end of running, we report the average number of features, repeatability, precision, matching score, recall and mean matching accuracy (a.k.a. MMA). The evaluation results will be displayed as:
 ```bash
 0 /data/hpatches-sequences-release/v_abstract
-5000 [0.7105522  0.7984268  0.5163258  0.71908796 0.7664455 ]
+5000 [0.6577944  0.7984268  0.49771258 0.73826474 0.7664455  0.4]
 1 /data/hpatches-sequences-release/v_adam
-1620 [1.25235    0.88788044 0.72517836 0.5968998  0.8819124 ]
+1620 [0.66010183 0.88788044 0.45460123 0.6796689  0.8819124  0.8]
 ...
 ----------i_eval_stats----------
 ...
 ----------v_eval_stats----------
 ...
 ----------all_eval_stats----------
-avg_n_feat 3916
-avg_rep 0.7831441
-avg_precision 0.7396421
-avg_matching_score 0.4628032
-avg_recall 0.6226283
-avg_MMA 0.7225959
+avg_n_feat 3924
+avg_rep 0.6222487
+avg_precision 0.7397446
+avg_matching_score 0.4186731
+avg_recall 0.63664365
+avg_MMA 0.7226566
+avg_homography_accuracy 0.72962976
 ```
+
+The results for repeatability and matching score is different from what we have reported in the paper, as we now apply a [symmetric check](https://github.com/lzx551402/ASLFeat/commit/0df33b75453d73af28927f203a2892a0acf6956f) when counting the number of covisible features (referring to [SuperPoint](https://github.com/rpautrat/SuperPoint)). This change may not influence the conclusion in the section of ablation study, but would be useful for making comparision with other relavant papers. We thank for [Sida Peng](https://pengsida.net/) for pointing this out when reproducing this work.
 
 To plot the results (i.e., reproduce Fig.3 in the paper), please include the [cached files](cache/), use the tool provided by [D2-Net](https://github.com/mihaidusmanu/d2-net/blob/master/hpatches_sequences/HPatches-Sequences-Matching-Benchmark.ipynb).
 
 ### 2. Benchmark on [FM-Bench](http://jwbian.net/fm-bench)
 
-Download the (customized) evaluation pipeline, and follow the instruction to download the [testing data](https://1drv.ms/f/s!AiV6XqkxJHE2g3ZC4zYYR05eEY_m):
+Download the (customized for data loading and randomness eschewing) evaluation pipeline, and follow the instruction to download the [testing data](https://1drv.ms/f/s!AiV6XqkxJHE2g3ZC4zYYR05eEY_m):
 ```bash
 git clone https://github.com/lzx551402/FM-Bench.git
 ```
@@ -174,16 +177,15 @@ cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
 
 1. Training data is provided in [GL3D](https://github.com/lzx551402/GL3D).
 
-2. You might be also interested in a 3D local feature, [D3Feat](https://github.com/XuyangBai/D3Feat/).
+2. You might be also interested in a 3D local feature ([D3Feat](https://github.com/XuyangBai/D3Feat/)).
 
-# Acknowledgements
+## Acknowledgements
 
-1. The backbone networks and the learning scheme is heavily borrowed from [D2-Net](https://github.com/mihaidusmanu/d2-net).
+1. The backbone networks and the learning scheme are heavily borrowed from [D2-Net](https://github.com/mihaidusmanu/d2-net).
 
-2. We thank you the authors of [R2D2](https://github.com/naver/r2d2) for sharing their evaluation results on HPatches that helped us plot Fig.1. The updated results of R2D2 are even more excited.
+2. We thank for the authors of [R2D2](https://github.com/naver/r2d2) for sharing their evaluation results on HPatches that helped us plot Fig.1. The updated results of R2D2 are even more excited.
 
 3. We refer to the public implementation of [SuperPoint](https://github.com/rpautrat/SuperPoint) for organizing the code and implementing the evaluation metrics.
 
 4. We implement the modulated DCN referring to [this](https://github.com/DHZS/tf-deformable-conv-layer/blob/master/nets/deformable_conv_layer.py). The current implementation is not efficient, and we expect a native implementation in TensorFlow to be available in the future.
 
-5. We thank for [Sida Peng](https://pengsida.net/) for sharing his experience in reproducing this work, also pointing out the flaws in our implementation of evaluation metrics.

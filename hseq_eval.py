@@ -60,7 +60,7 @@ def matcher(consumer_queue, sess, evaluator, config):
             continue
         ref_img, ref_kpts, ref_descs, seq_info = record[0]
 
-        eval_stats = np.array((0, 0, 0, 0, 0, 0, 0), np.float32)
+        eval_stats = np.array((0, 0, 0, 0, 0, 0, 0, 0), np.float32)
 
         seq_idx = seq_info[0]
         seq_name = seq_info[1]
@@ -73,7 +73,7 @@ def matcher(consumer_queue, sess, evaluator, config):
             num_feat = min(ref_kpts.shape[0], test_kpts.shape[0])
             if num_feat > 0:
                 mma_putative_matches = evaluator.feature_matcher(
-                    sess, ref_descs, test_descs, test_kpts)
+                    sess, ref_descs, test_descs)
             else:
                 mma_putative_matches = []
             mma_inlier_matches = evaluator.get_inlier_matches(
@@ -83,7 +83,7 @@ def matcher(consumer_queue, sess, evaluator, config):
             # get covisible keypoints
             ref_mask, test_mask = evaluator.get_covisible_mask(ref_kpts, test_kpts,
                                                                ref_img.shape, test_img.shape,
-                                                               gt_homo)
+                                                               gt_homo, scaling)
             cov_ref_coord, cov_test_coord = ref_kpts[ref_mask], test_kpts[test_mask]
             cov_ref_feat, cov_test_feat = ref_descs[ref_mask], test_descs[test_mask]
             num_cov_feat = (cov_ref_coord.shape[0] + cov_test_coord.shape[0]) / 2
@@ -92,10 +92,12 @@ def matcher(consumer_queue, sess, evaluator, config):
             # establish putative matches
             if num_cov_feat > 0:
                 putative_matches = evaluator.feature_matcher(
-                    sess, cov_ref_feat, cov_test_feat, cov_test_coord)
+                    sess, cov_ref_feat, cov_test_feat)
             else:
                 putative_matches = []
             num_putative = max(len(putative_matches), 1)
+            # get homography accuracy
+            correctness = evaluator.compute_homography_accuracy(cov_ref_coord, cov_test_coord, ref_img.shape, putative_matches, gt_homo, scaling)
             # get inlier matches
             inlier_matches = evaluator.get_inlier_matches(
                 cov_ref_coord, cov_test_coord, putative_matches, gt_homo, scaling)
@@ -107,7 +109,8 @@ def matcher(consumer_queue, sess, evaluator, config):
                                     num_inlier / max(num_putative, 1), # precision
                                     num_inlier / max(num_cov_feat, 1), # matching score
                                     num_inlier / max(gt_num, 1),  # recall
-                                    num_mma_inlier / max(num_mma_putative, 1))) / 5  # MMA
+                                    num_mma_inlier / max(num_mma_putative, 1),
+                                    correctness)) / 5  # MMA
 
         print(int(eval_stats[1]), eval_stats[2:])
         evaluator.stats['all_eval_stats'] += eval_stats
