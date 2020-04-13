@@ -47,6 +47,10 @@ You will be able to see the matching results by displaying [disp.jpg](imgs/disp.
 
 You may configure ``configs/matching_eval.yaml`` to test images of your own.
 
+## Training scripts
+
+We release the training scripts in a separate project, [TFMatch](https://github.com/lzx551402/tfmatch), which also contains our previous research works ([GeoDesc](https://github.com/lzx551402/geodesc), ECCV'18 and [ContextDesc](https://github.com/lzx551402/contextdesc), CVPR'19).
+
 ## Evaluation scripts
 
 ### 1. Benchmark on [HPatches dataset](http://icvl.ee.ic.ac.uk/vbalnt/hpatches)
