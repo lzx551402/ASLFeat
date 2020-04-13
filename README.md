@@ -191,5 +191,5 @@ cd /local/aslfeat && python evaluations.py --config configs/imw2020_eval.yaml
 
 3. We refer to the public implementation of [SuperPoint](https://github.com/rpautrat/SuperPoint) for organizing the code and implementing the evaluation metrics.
 
-4. We implement the modulated DCN referring to [this](https://github.com/DHZS/tf-deformable-conv-layer/blob/master/nets/deformable_conv_layer.py). The current implementation is not efficient, and we expect a native implementation in TensorFlow to be available in the future.
+4. We implement the modulated DCN referring to [this](https://github.com/DHZS/tf-deformable-conv-layer/blob/master/nets/deformable_conv_layer.py). The current implementation is not efficient, and we expect a native implementation in TensorFlow to be available in the future. (update: this [contribution](https://github.com/tensorflow/addons/pull/1129) would be extremely useful once it is integrated!)
 
