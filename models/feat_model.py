@@ -13,7 +13,7 @@ sys.path.append('..')
 
 class FeatModel(BaseModel):
     endpoints = None
-    default_config = {'max_dim': 1280}
+    default_config = {'max_dim': 2048}
 
     def _init_model(self):
         return

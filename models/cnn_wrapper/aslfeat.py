@@ -91,7 +91,7 @@ class ASLFeatNet(Network):
         if det_config['kpt_refinement']:
             offsets = tf.squeeze(self.kpt_refinement(score_map), axis=-2)
             offsets = tf.gather_nd(offsets, kpt_inds, batch_dims=1)
-            offsets = tf.clip_by_value(offsets, -1.0, 1.0)
+            offsets = tf.clip_by_value(offsets, -0.5, 0.5)
             kpt_inds = tf.cast(kpt_inds, tf.float32) + offsets
         else:
             kpt_inds = tf.cast(kpt_inds, tf.float32)
@@ -254,23 +254,6 @@ class ASLFeatNet(Network):
         thld = (edge_thld + 1)**2 / edge_thld
         is_not_edge = tf.logical_and(tr * tr / det <= thld, det > 0)
         return is_not_edge
-
-    def det_mask_generation(self, inputs, n_channel, dilation=1, ksize=3, edge_thld=5):
-        # depthwise max
-        depthwise_max = tf.reduce_max(inputs, axis=-1, keep_dims=True)
-        # is_depthwise_max = tf.equal(depthwise_max, inputs)
-        is_depthwise_max = tf.equal(depthwise_max, inputs)
-        # local max
-        pad_inputs = tf.pad(inputs, [[0, 0], [dilation, dilation], [
-                            dilation, dilation], [0, 0]], constant_values=0)
-        local_max = tf.nn.pool(pad_inputs, [ksize, ksize], 'MAX',
-                               'VALID', dilation_rate=[dilation, dilation])
-        is_local_max = tf.equal(inputs, local_max)
-        # non-edge
-        is_not_edge = self.edge_mask(inputs, n_channel, dilation,
-                                     edge_thld) if edge_thld > 0 else None
-        return is_depthwise_max, is_local_max, is_not_edge
-
 
 def interpolate(pos, inputs, batched=True, nd=True):
     if not batched:
