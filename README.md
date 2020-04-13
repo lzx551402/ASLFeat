@@ -27,6 +27,16 @@ pip install -r requirements.txt && \
 conda activate aslfeat
 ```
 
+## 4/14/2020 Update
+
+We here release ASLFeat with post-CVPR update, which we find to perform consistently better among the evaluations. The model can be accessed by:
+
+```bash
+wget https://research.altizure.com/data/aslfeat_models/aslfeatv2.tar
+```
+
+On HPatches dataset, the MMA@3 is improved from 72.29 to 74.02 in single scale prediction. The major difference comes from 1) using blended images and rendered depths, which is proposed in [BlendedMVS](https://github.com/YoYo000/BlendedMVS) and integrated in [GL3D](https://github.com/lzx551402/GL3D), 2) using [circle loss](https://arxiv.org/abs/2002.10857) and 3) conducting early stopping. Details can be found in the updated arxiv paper. The above implementation is also available in [TFMatch](https://github.com/lzx551402/tfmatch).
+
 ## Get started
 
 Clone the repo and download the pretrained model:
@@ -64,9 +74,9 @@ cd /local/aslfeat && python hseq_eval.py --config configs/hseq_eval.yaml
 At the end of running, we report the average number of features, repeatability, precision, matching score, recall and mean matching accuracy (a.k.a. MMA). The evaluation results will be displayed as:
 ```bash
 0 /data/hpatches-sequences-release/v_abstract
-5000 [0.6577944  0.7984268  0.49771258 0.73826474 0.7664455  0.4]
+5000 [0.65887743 0.7993664  0.49892387 0.73872983 0.7671514  0.6]
 1 /data/hpatches-sequences-release/v_adam
-1620 [0.66010183 0.88788044 0.45460123 0.6796689  0.8819124  0.8]
+1620 [0.6605903  0.88857824 0.45584163 0.6810486  0.88263476 0.6]
 ...
 ----------i_eval_stats----------
 ...
@@ -74,17 +84,31 @@ At the end of running, we report the average number of features, repeatability, 
 ...
 ----------all_eval_stats----------
 avg_n_feat 3924
-avg_rep 0.6222487
-avg_precision 0.7397446
-avg_matching_score 0.4186731
-avg_recall 0.63664365
-avg_MMA 0.7226566
-avg_homography_accuracy 0.72962976
+avg_rep 0.62246275
+avg_precision 0.73995966
+avg_matching_score 0.41950417
+avg_recall 0.63767093
+avg_MMA 0.7228764
+avg_homography_accuracy 0.72037053
+```
+
+As a reference, ASLFeat with post-CVPR update achieves:
+```bash
+----------all_eval_stats----------
+avg_n_feat 3617
+avg_rep 0.6027558
+avg_precision 0.7546077
+avg_matching_score 0.42620808
+avg_recall 0.66685575
+avg_MMA 0.7402437
+avg_homography_accuracy 0.74814826
 ```
 
 The results for repeatability and matching score is different from what we have reported in the paper, as we now apply a [symmetric check](https://github.com/lzx551402/ASLFeat/commit/0df33b75453d73af28927f203a2892a0acf6956f) when counting the number of covisible features (referring to [SuperPoint](https://github.com/rpautrat/SuperPoint)). This change may not influence the conclusion in the section of ablation study, but would be useful for making comparision with other relavant papers. We thank for [Sida Peng](https://pengsida.net/) for pointing this out when reproducing this work.
 
-To plot the results (i.e., reproduce Fig.3 in the paper), please include the [cached files](cache/), use the tool provided by [D2-Net](https://github.com/mihaidusmanu/d2-net/blob/master/hpatches_sequences/HPatches-Sequences-Matching-Benchmark.ipynb).
+To plot the results (i.e., reproduce Fig.3 in the paper, shown below), please include the [cached files](cache/), use the tool provided by [D2-Net](https://github.com/mihaidusmanu/d2-net/blob/master/hpatches_sequences/HPatches-Sequences-Matching-Benchmark.ipynb).
+
+![Framework](imgs/hseq.png)
 
 ### 2. Benchmark on [FM-Bench](http://jwbian.net/fm-bench)
 
