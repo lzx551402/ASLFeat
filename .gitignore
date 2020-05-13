@@ -3,3 +3,4 @@
 *.pyc
 .vscode
 pretrained/*
+*DS_Store
