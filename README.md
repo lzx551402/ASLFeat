@@ -35,7 +35,7 @@ We here release ASLFeat with post-CVPR update, which we find to perform consiste
 wget https://research.altizure.com/data/aslfeat_models/aslfeatv2.tar
 ```
 
-On HPatches dataset, the MMA@3 is improved from 72.29 to 74.02 in single scale prediction. The major difference comes from 1) using blended images and rendered depths, which is proposed in [BlendedMVS](https://github.com/YoYo000/BlendedMVS) and integrated in [GL3D](https://github.com/lzx551402/GL3D), 2) using [circle loss](https://arxiv.org/abs/2002.10857) and 3) conducting early stopping. Details can be found in the updated arxiv paper. The above implementation is also available in [TFMatch](https://github.com/lzx551402/tfmatch).
+On HPatches dataset, the MMA@3 is improved from 72.29 to 74.31 in single scale prediction, while the multi-scale prediction now achieves 75.26. The major difference comes from 1) using blended images and rendered depths, which is proposed in [BlendedMVS](https://github.com/YoYo000/BlendedMVS) and integrated in [GL3D](https://github.com/lzx551402/GL3D), 2) using [circle loss](https://arxiv.org/abs/2002.10857) and 3) conducting early stopping. Details can be found in the updated arxiv paper. The above implementation is also available in [TFMatch](https://github.com/lzx551402/tfmatch).
 
 ## Get started
 
@@ -96,12 +96,24 @@ As a reference, ASLFeat with post-CVPR update achieves:
 ```bash
 ----------all_eval_stats----------
 avg_n_feat 3617
-avg_rep 0.6027558
-avg_precision 0.7546077
-avg_matching_score 0.42620808
-avg_recall 0.66685575
-avg_MMA 0.7402437
-avg_homography_accuracy 0.74814826
+avg_rep 0.6026927 
+avg_precision 0.75740457 
+avg_matching_score 0.42784035 
+avg_recall 0.6682571 
+avg_MMA 0.74305236 
+avg_homography_accuracy 0.7314815
+```
+
+When multi-scale (MS) inference is enabled, the results become:
+```bash
+----------all_eval_stats----------
+avg_n_feat 4241
+avg_rep 0.6737002
+avg_precision 0.7681067
+avg_matching_score 0.41503817
+avg_recall 0.58123404
+avg_MMA 0.7526477
+avg_homography_accuracy 0.7537038
 ```
 
 The results for repeatability and matching score is different from what we have reported in the paper, as we now apply a [symmetric check](https://github.com/lzx551402/ASLFeat/commit/0df33b75453d73af28927f203a2892a0acf6956f) when counting the number of covisible features (referring to [SuperPoint](https://github.com/rpautrat/SuperPoint)). This change may not influence the conclusion in the section of ablation study, but would be useful for making comparision with other relavant papers. We thank for [Sida Peng](https://pengsida.net/) for pointing this out when reproducing this work.
