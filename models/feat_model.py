@@ -56,7 +56,7 @@ class FeatModel(BaseModel):
         idxs = np.negative(scores).argsort()[0:self.config['config']['kpt_n']]
 
         descs = descs[idxs]
-        kpts = kpts[idxs] * np.array([W / data_size[1], H / data_size[0]], dtype=np.float32)
+        kpts = kpts[idxs]
         scores = scores[idxs]
         return descs, kpts, scores
 
