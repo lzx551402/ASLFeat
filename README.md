@@ -29,21 +29,16 @@ conda activate aslfeat
 
 ## 4/14/2020 Update
 
-We here release ASLFeat with post-CVPR update, which we find to perform consistently better among the evaluations. The model can be accessed by:
-
-```bash
-wget https://research.altizure.com/data/aslfeat_models/aslfeatv2.tar
-```
+We here release ASLFeat with post-CVPR update, which we find to perform consistently better among the evaluations. The model can be accessed from [URL](https://1drv.ms/u/s!Anl8gFgW1C7LkmyOSQXNmBrhq0V-?e=vNXeqt).
 
 On HPatches dataset, the MMA@3 is improved from 72.29 to 74.31 in single scale prediction, while the multi-scale prediction now achieves 75.26. The major difference comes from 1) using blended images and rendered depths, which is proposed in [BlendedMVS](https://github.com/YoYo000/BlendedMVS) and integrated in [GL3D](https://github.com/lzx551402/GL3D), 2) using [circle loss](https://arxiv.org/abs/2002.10857) and 3) conducting early stopping. Details can be found in the updated arxiv paper. The above implementation is also available in [TFMatch](https://github.com/lzx551402/tfmatch).
 
 ## Get started
 
-Clone the repo and download the pretrained model:
+Clone the repo and download the pretrained model [URL](https://1drv.ms/u/s!Anl8gFgW1C7Lkm2yQYz8JNHkyAIe?e=vnLlVd):
 ```bash
 git clone https://github.com/lzx551402/aslfeat.git && \
 cd ASLFeat/pretrained && \
-wget https://research.altizure.com/data/aslfeat_models/aslfeat.tar && \
 tar -xvf aslfeat.tar
 ```
 
@@ -137,7 +132,7 @@ cd /local/aslfeat && python evaluations.py --config configs/fmbench_eval.yaml
 
 The extracted features will be stored in ``FM-Bench/Features_aslfeat``. Use Matlab to run ``Pipeline/Pipeline_Demo.m"`` then ``Evaluation/Evaluate.m`` to obtain the results.
 
-The cached results of ASLFeat can be reached [here](https://research.altizure.com/data/aslfeat_models/Results.tar).
+The cached results of ASLFeat can be reached [here](https://1drv.ms/u/s!Anl8gFgW1C7LknP530x7BAdmuNUY?e=hmmPDa).
 
 ### 3. Benchmark on [visual localization](https://www.visuallocalization.net/)
 
